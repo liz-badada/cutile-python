@@ -54,3 +54,4 @@ Proceed to the :ref:`quickstart` page for installation instructions and a comple
    performance
    operations
    debugging
+   known_issues

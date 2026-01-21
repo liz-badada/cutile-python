@@ -116,5 +116,5 @@ Developer Tools
 This profile can then be loaded in a graphical instance of Nsight Compute and the kernel ``vector_add`` selected to see statistics about the kernel.
 
 .. note:: 
-    Capturing detailed statistics for cuTile Python kernels requires running on NVIDIA Driver r590 or later.
+    Capturing detailed statistics for cuTile Python kernels requires running on NVIDIA Driver equals or later than r580.126.09 (linux) or r582.16 (windows).
 
