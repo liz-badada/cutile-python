@@ -1494,6 +1494,7 @@ def pos_impl(x: Var):
 @impl(ct.floor, fixed_args=["floor", _UNARY_STRICT_FLOAT])
 @impl(ct.ceil, fixed_args=["ceil", _UNARY_STRICT_FLOAT])
 @impl(ct.negative, fixed_args=["neg", _UNARY_INT_FLOAT])
+@impl(ct.abs, fixed_args=["abs", _UNARY_ANYTHING])
 @impl(abs, fixed_args=["abs", _UNARY_ANYTHING])
 @impl(operator.invert, fixed_args=["invert", _UNARY_BOOL_INT])
 @impl(operator.neg, fixed_args=["neg", _UNARY_INT_FLOAT])

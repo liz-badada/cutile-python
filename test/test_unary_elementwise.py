@@ -214,18 +214,20 @@ def test_array_pos(shape, tile, dtype, tmp_path):
     assert_equal(y, y_ref)
 
 
+@pytest.mark.parametrize("abs_func", ['abs', 'ct.abs'])
 @pytest.mark.parametrize("dtype", bool_dtypes + int_dtypes + float_dtypes, ids=dtype_id)
-def test_array_abs(shape, tile, dtype, tmp_path):
+def test_array_abs(shape, tile, dtype, tmp_path, abs_func):
     x = make_tensor(shape, dtype=dtype, device='cuda')
     y = torch.zeros_like(x, device="cuda")
-    kernel = array_kernel('abs', "ty = abs(tx)", tmp_path)
+    kernel = array_kernel('abs', f"ty = {abs_func}(tx)", tmp_path)
     launch_unary(kernel, x, y, tile)
     assert_equal(y, abs(x))
 
 
+@pytest.mark.parametrize("abs_func", ['abs', 'ct.abs'])
 @pytest.mark.parametrize("is_constant", [False, True])
 @pytest.mark.parametrize("dtype", int_dtypes + float_dtypes, ids=dtype_id)
-def test_scalar_abs(shape, tile, is_constant, dtype, tmp_path):
+def test_scalar_abs(shape, tile, is_constant, dtype, tmp_path, abs_func):
     if dtype in int_dtypes:
         x = -5
         dtype_str = "int"
@@ -234,9 +236,9 @@ def test_scalar_abs(shape, tile, is_constant, dtype, tmp_path):
         dtype_str = "float"
     y = torch.zeros(shape, dtype=dtype, device='cuda')
     if not is_constant:
-        kernel = scalar_kernel('abs', 'c = abs(x)', tmp_path)
+        kernel = scalar_kernel('abs', f'c = {abs_func}(x)', tmp_path)
     else:
-        kernel = const_scalar_kernel('abs', dtype_str, 'c = abs(x)', tmp_path)
+        kernel = const_scalar_kernel('abs', dtype_str, f'c = {abs_func}(x)', tmp_path)
     launch_unary(kernel, x, y, tile)
     assert_equal(y, abs(x))
 

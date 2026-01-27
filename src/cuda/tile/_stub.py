@@ -1812,6 +1812,12 @@ def ceil(x, /) -> TileOrScalar:
     pass
 
 
+@_doc_unary_op
+@function
+def abs(x, /) -> TileOrScalar:
+    pass
+
+
 @function
 def negative(x, /) -> TileOrScalar:
     """Same as `-x`.
