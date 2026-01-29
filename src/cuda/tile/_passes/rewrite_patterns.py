@@ -150,6 +150,11 @@ def rewrite_patterns(root_block: Block):
             # External use -- can't rewrite
             continue
 
+        new_inputs = set(v.name for op in r.to_add for v in op.all_inputs())
+        if deleted_results & new_inputs:
+            # New operations use deleted results -- can't rewrite
+            continue
+
         # For now, we insert the new operations at the location of the last matched op.
         # This is not always correct for maintaining topological sorting, in case if matches
         # have multiple outputs. However, currently we only care about rewriting subgraphs

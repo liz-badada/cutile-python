@@ -56,6 +56,28 @@ def add_mul_kernel(x, y, z, output,
     ct.store(output, index=(bidx, 0), tile=output_tile)
 
 
+@ct.kernel
+def mul_add_same_operand_kernel(x, output,
+                                TILE: ct.Constant[int],
+                                DIM: ct.Constant[int]):
+    bidx = ct.bid(0)
+    tx = ct.load(x, index=(bidx, 0), shape=(TILE, DIM))
+    tmp = tx * tx
+    output_tile = tmp + tmp
+    ct.store(output, index=(bidx, 0), tile=output_tile)
+
+
+def test_fma_skip_when_new_op_uses_deleted_var():
+    shape = (128, 32)
+    x = make_tensor(shape, dtype=torch.float32, device='cuda')
+    output = make_tensor(shape, dtype=torch.float32, device='cuda')
+    TILE = 32
+    grid = (ceil(shape[0] / TILE), 1, 1)
+    ct.launch(torch.cuda.current_stream(), grid, mul_add_same_operand_kernel,
+              (x, output, TILE, shape[1]))
+    assert_close(output, 2 * x * x, atol=1e-3, rtol=1e-3)
+
+
 @pytest.mark.use_mlir
 @pytest.mark.parametrize(
     "kernel, kernel_ref",
